@@ -1,17 +1,56 @@
-# C-kernel
+
+
 My C-Kernel
-I'm not a super person in C or assembler, I barely found the BIOS bootloader, so please don't hate me :)
-I'm just trying to code shit
-And now a little about the code, here is a similar Unix kernel, it doesn’t work on a real PC. If anyone wants, you can modify it, and I won’t mind.
-How to compile this?
-If you are on Windows:
-1.Download NASM
-2.Download GSS
-3.Download GNU LD
-4.Download QEMU System 86
-4.nasm -f elf32 kernel.asm -o kasm.o
-5.gcc -m32 -c kernel.c -o kc.o
-6.ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
-7. qemu-system-i386 -kernel kernel
-(All command on cmd)
-In linux maybe you know.
+
+Welcome to my simple C-based kernel project! I’m not an expert in C or assembly, and I barely managed to get a BIOS bootloader working. So, please be patient as I’m just experimenting and learning here. Feel free to contribute or modify the code if you'd like—any help is appreciated!
+
+About the Project
+
+This project is a basic attempt at creating a kernel similar to a Unix-like system. However, it is not functional on real hardware at the moment and serves primarily for learning purposes.
+
+Features
+
+A basic bootloader in assembly.
+
+Simple kernel logic written in C.
+
+Cross-compilation support.
+
+
+How to Build and Run
+
+On Windows
+
+To compile the kernel on Windows, follow these steps:
+
+1. Download and install the following tools:
+
+NASM (for assembly code)
+
+GCC (for compiling C code)
+
+GNU LD (for linking)
+
+QEMU (for emulating the kernel)
+
+
+
+2. Open cmd (Command Prompt) and run the following commands:
+
+
+
+nasm -f elf32 kernel.asm -o kasm.o
+gcc -m32 -c kernel.c -o kc.o
+ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
+qemu-system-i386 -kernel kernel
+
+On Linux
+
+If you're on Linux, you're probably familiar with the necessary tools. The steps are similar, just make sure you have nasm, gcc, ld, and qemu installed. You can use the same commands as above in your terminal.
+
+Contributing
+
+Contributions are welcome! If you have improvements, ideas, or bug fixes, feel free to fork the repository and open a pull request. I'm happy to review and merge them.
+
+
+
