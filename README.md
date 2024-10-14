@@ -25,14 +25,17 @@ To compile the kernel on Windows, follow these steps:
 
 1. Download and install the following tools:
 
-NASM (for assembly code)
+NASM (for assembly code) 
+https://www.nasm.us/
 
 GCC (for compiling C code)
+https://gcc.gnu.org/
 
 GNU LD (for linking)
+https://sourceware.org/binutils/docs/ld/
 
 QEMU (for emulating the kernel)
-
+https://www.qemu.org/
 
 
 2. Open cmd (Command Prompt) and run the following commands:
