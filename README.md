@@ -9,8 +9,9 @@ If you are on Windows:
 2.Download GSS
 3.Download GNU LD
 4.Download QEMU System 86
-4.nasm -f elf32 -o kernel_asm.o kernel.asm
-5.gcc -m32 -ffreestanding -c kernel.c -o kernel_c.o
-6.ld -m elf_i386 -T link.ld -o kernel.bin kernel_asm.o kernel_c.o
+4.nasm -f elf32 kernel.asm -o kasm.o
+5.gcc -m32 -c kernel.c -o kc.o
+6.ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
+7. qemu-system-i386 -kernel kernel.bin
 (All command on cmd)
 In linux maybe you know.
