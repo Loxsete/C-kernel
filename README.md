@@ -12,6 +12,6 @@ If you are on Windows:
 4.nasm -f elf32 kernel.asm -o kasm.o
 5.gcc -m32 -c kernel.c -o kc.o
 6.ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
-7. qemu-system-i386 -kernel kernel.bin
+7. qemu-system-i386 -kernel kernel
 (All command on cmd)
 In linux maybe you know.
