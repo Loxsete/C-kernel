@@ -35,8 +35,11 @@ QEMU (emulator): qemu.org
 2. Open Command Prompt and run the following commands:
 
 nasm -f elf32 kernel.asm -o kasm.o
+
 gcc -m32 -c kernel.c -o kc.o
+
 ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
+
 qemu-system-i386 -kernel kernel
 
 
@@ -48,6 +51,7 @@ On Linux
 Open a terminal and run:
 
 sudo apt update
+
 sudo apt install nasm gcc qemu-system-i386 binutils
 
 
@@ -56,8 +60,11 @@ sudo apt install nasm gcc qemu-system-i386 binutils
 Navigate to your kernel project directory in the terminal and run:
 
 nasm -f elf32 kernel.asm -o kasm.o
+
 gcc -m32 -c kernel.c -o kc.o
+
 ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
+
 
 
 3. Run the Kernel in QEMU:
