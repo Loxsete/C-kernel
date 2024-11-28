@@ -10,10 +10,13 @@
 #define ENTER_KEY_CODE 0x1C
 #define BACKSPACE_KEY_CODE 0x0E
 
+
 extern void keyboard_handler(void);
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
+
+void simple_itoa(int num, char *str); // Прототип функции
 
 unsigned int current_loc = 0;
 char *vidptr = (char*)0xb8000;
@@ -57,6 +60,47 @@ int simple_atoi(const char *str) {
     }
     return res;
 }
+
+void time(void) {
+    unsigned char second, minute, hour;
+
+    unsigned char read_rtc(unsigned char reg) {
+        write_port(0x70, reg);
+        return read_port(0x71);
+    }
+
+    second = read_rtc(0x00);
+    minute = read_rtc(0x02);
+    hour = read_rtc(0x04);
+
+    if (!(read_rtc(0x0B) & 0x04)) {
+        second = (second & 0x0F) + ((second / 16) * 10);
+        minute = (minute & 0x0F) + ((minute / 16) * 10);
+        hour = (hour & 0x0F) + ((hour / 16) * 10);
+    }
+
+    int timezone_offset = 2;
+    hour = (hour + timezone_offset) % 24;
+
+    char time_str[9];
+    time_str[0] = '0' + (hour / 10);
+    time_str[1] = '0' + (hour % 10);
+    time_str[2] = ':';
+    time_str[3] = '0' + (minute / 10);
+    time_str[4] = '0' + (minute % 10);
+    time_str[5] = ':';
+    time_str[6] = '0' + (second / 10);
+    time_str[7] = '0' + (second % 10);
+    time_str[8] = '\0';
+
+    kprint("Current time: ");
+    kprint(time_str);
+    kprint("\n");
+}
+
+
+
+
 
 void simple_itoa(int num, char *str) {
     int i = 0;
@@ -171,6 +215,7 @@ void keyboard_handler_main(void) {
                     kprint("3) info - Show system information\n");
                     kprint("4) shutdown - Shutdown the system\n");
                     kprint("5) calc - Open calculator\n");
+                    kprint("6) time - Show time in Kyev");
                 } 
                 else if (my_strcmp(input_buffer, "clear") == 0) {
                     clear_screen();
@@ -186,6 +231,8 @@ void keyboard_handler_main(void) {
                                   "int $0x19");
                 } else if (my_strcmp(input_buffer, "calc") == 0) {
                     calc();
+                } else if (my_strcmp(input_buffer, "time") == 0) {
+                    time();
                 } else {
                     kprint("Unknown command.\n");
                 }
