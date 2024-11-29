@@ -103,8 +103,5 @@ Contributions are welcome! If you have improvements, ideas, or bug fixes, feel f
 
 ---
 
-Tags
-
-#CKernel #Assembly #CProgramming #OperatingSystem #KernelDevelopment #Bootloader #BIOS #LowLevelProgramming #CrossPlatform #LearningProject #QEMU #GCC #NASM #Linux #Windows #UnixLike #SystemsProgramming #MemoryManagement #ProcessScheduling #FileSystem #KernelHacking #EmbeddedSystems #BareMetalProgramming #x86Assembly #OpenSource #CodeLearning #CCompiler #LinkerScript #Emulation #VirtualMachine #SystemCalls #TaskManagement #InterruptHandling #ProtectedMode #RealMode #Ring0
 
 My discord: @bratxz
