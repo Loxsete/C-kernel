@@ -38,8 +38,8 @@ QEMU (emulator): qemu.org
 2. Open Command Prompt and run the following commands:
 
 nasm -f elf32 kernel.asm -o kasm.o
-
 gcc -m32 -fno-stack-protector -c kernel.c -o kc.o
+
 
 ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
 
