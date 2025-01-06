@@ -215,7 +215,7 @@ void keyboard_handler_main(void) {
                     kprint("3) info - Show system information\n");
                     kprint("4) shutdown - Shutdown the system\n");
                     kprint("5) calc - Open calculator\n");
-                    kprint("6) time - Show time in Kyev");
+                    kprint("6) time - Show time");
                 } 
                 else if (my_strcmp(input_buffer, "clear") == 0) {
                     clear_screen();
