@@ -1,5 +1,3 @@
-Here's a more concise and straightforward version of your text with less "paфos":
-My C Kernel
 
 Welcome to my C-based kernel project! This is a learning experiment where I’m exploring how basic system booting works. While I’m no expert in C or assembly, I’ve managed to get a simple BIOS bootloader working. Feel free to explore, suggest improvements, or contribute.
 About the Project
