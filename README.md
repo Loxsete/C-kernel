@@ -50,7 +50,6 @@ Future Goals
     Add I/O support (keyboard and screen).
     Implement memory management.
     Introduce multitasking.
-    Add file system support.
 
 Contributing
 
