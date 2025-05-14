@@ -1,58 +1,87 @@
+# Loxsete-OS: A Minimal x86 Kernel
 
-Welcome to my C-based kernel project! This is a learning experiment where I’m exploring how basic system booting works. While I’m no expert in C or assembly, I’ve managed to get a simple BIOS bootloader working. Feel free to explore, suggest improvements, or contribute.
-About the Project
+## Overview
 
-This kernel is a minimal Unix-like system designed for learning. It’s not functional on real hardware yet but serves as a foundation for experimenting with system development.
-Features
+Loxsete-OS is a minimal operating system kernel written in C, targeting the x86 architecture. It provides basic functionality such as keyboard input handling, a simple command-line interface, and text output to a VGA display. This project is designed for educational purposes, demonstrating low-level system programming concepts like interrupt handling, IDT setup, and direct hardware interaction.
 
-    Basic Bootloader in Assembly: A simple BIOS bootloader to initialize the system.
-    Kernel Logic in C: Basic kernel code ready for expansion.
-    Cross-Compilation Support: Build and run on multiple platforms.
+## Features
 
-How to Build and Run
-On Windows
+- Basic VGA text mode output for displaying text on the screen.
+- Keyboard input processing with support for Shift key modifiers.
+- Command-line interface with a dynamic input buffer.
+- Interrupt-driven keyboard handling via IDT.
+- Simple command execution framework for basic interactivity.
 
-    Install:
-        NASM: nasm.us
-        GCC: gcc.gnu.org
-        GNU LD: sourceware.org
-        QEMU: qemu.org
+## Prerequisites
 
-    Build and run with:
+To build and run Loxsete-OS, you need the following tools:
 
-    nasm -f elf32 kernel.asm -o kasm.o
-    gcc -m32 -fno-stack-protector -c kernel.c -o kc.o
-    ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
-    qemu-system-i386 -kernel kernel
+- A Linux environment (e.g., Ubuntu) or WSL on Windows.
+- gcc (GNU C Compiler).
+- nasm (Netwide Assembler).
+- grub-mkrescue for creating the bootable ISO.
+- qemu-system-i386 for emulation.
+- make to automate the build process.
 
-On Linux
+Install these on a Debian-based system with:
 
-    Install tools:
-
+```bash
 sudo apt update
-sudo apt install nasm gcc qemu-system-i386 binutils
+sudo apt install gcc nasm grub-pc-bin grub-efi qemu-system-x86 make
+```
 
-Build and run with:
+## Building the Kernel
 
-    nasm -f elf32 kernel.asm -o kasm.o
-    gcc -m32 -fno-stack-protector -c kernel.c -o kc.o
-    ld -m elf_i386 -T link.ld -o kernel kasm.o kc.o
-    qemu-system-i386 -kernel kernel
+1. Clone or download the project repository.
+2. Navigate to the project directory.
+3. Run the following command to compile the kernel and create a bootable ISO:
 
-Project Structure
+```bash
+make
+```
 
-    kernel.asm: Bootloader written in assembly.
-    kernel.c: Basic kernel logic in C.
-    link.ld: Linker script to combine object files and set the load address.
+## Running the Kernel
 
-Future Goals
+To test the kernel in QEMU:
 
-    Add I/O support (keyboard and screen).
-    Implement memory management.
-    Introduce multitasking.
+After building, run:
 
-Contributing
+```bash
+make run
+```
 
-Contributions are welcome! Fork the repository, make changes, and open a pull request. I’d love to see your ideas.
+This launches QEMU with the generated ISO, booting Loxsete-OS.
 
-Discord: @bratxz
+## Using Loxsete-OS
+
+Upon booting, the kernel initializes and displays a welcome message. You can interact with the system via the command-line interface:
+
+- Type commands and press Enter to execute them.
+- Use the `help` command to see a list of available commands.
+- The kernel supports basic text input, backspace, and Shift for uppercase characters.
+
+## Project Structure
+
+- `kernel.c`: Main kernel code, including initialization, keyboard handling, and command processing.
+- `keyboard_map.h`: Defines the keyboard scancode-to-ASCII mapping.
+- `mystddef.h`: Custom type definitions.
+- `commands.h`: Command-related functions and logic.
+- `Makefile`: Automates building and running the kernel.
+
+## Contributing
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Submit a pull request with clear descriptions of your changes.
+
+## Notes
+
+- This is a minimal kernel and does not include advanced features like memory management or multitasking.
+- The project is designed for x86 32-bit systems and uses legacy BIOS booting via GRUB.
+- For debugging, you can modify the QEMU command in the Makefile to include `-d int,cpu` for detailed logs.
+
+## License
+
+This project is licensed under the MIT License. See the LICENSE file for details (if added).
