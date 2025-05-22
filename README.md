@@ -30,6 +30,20 @@ sudo apt update
 sudo apt install gcc nasm grub-pc-bin grub-efi qemu-system-x86 make
 ```
 
+## Building cross-compilers toolchain
+
+To build cross-compilers toolchain you need to install suck dependencies:
+
+- libmpfr
+- libgmp
+- libmpc
+- autoconf
+- automake
+- wget
+- tar
+
+Run ```toolchain.sh``` script, which will automatically download and build GCC and Binutils for 1686-elf architecture, but you will need to add ```toolchain/i686-elf/bin``` to your PATH and make sure, it will not reset after shell restart(you can put export command in your shell rc file)
+
 ## Building the Kernel
 
 1. Clone or download the project repository.

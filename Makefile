@@ -1,79 +1,62 @@
-# Компиляторы и утилиты
-NASM = nasm
-GCC = gcc
-LD = ld
-GRUBMKRESCUE = grub-mkrescue
-QEMU = qemu-system-i386
+include config.mk
 
-# Флаги
-NASMFLAGS = -f elf32
-CFLAGS = -m32 -fno-stack-protector -ffreestanding -c -Iinclude
-LDFLAGS = -m elf_i386 -T link.ld
+# Directories
+SRC_DIR := src
+BUILD_DIR := build
+BUILD_C := $(BUILD_DIR)/c
+BUILD_ASM := $(BUILD_DIR)/asm
+ISO_DIR := iso
 
-# Директории
-BIN_DIR = bin
-SRC_DIR = src
-INCLUDE_DIR = include
-ISO_DIR = iso/boot/grub
+# Compiler/Assembler/Linker Flags
+TARGET_ASMFLAGS += -f elf
+TARGET_CFLAGS += -nostdlib -ffreestanding -m32 -Iinclude
+TARGET_LINKFLAGS += -T link.ld -nostdlib
+TARGET_LIBS += -lgcc
 
-# Файлы
-KERNEL = $(BIN_DIR)/kernel.bin
-ISO = loxsete-os.iso
-GRUB_CFG_PATH = iso/boot/grub/grub.cfg
+# Sources and headers
+SOURCES_C := $(shell find $(SRC_DIR) -type f -name "*.c")
+SOURCES_ASM := $(shell find $(SRC_DIR) -type f -name "*.asm")
+HEADERS_C := $(shell find $(SRC_DIR) -type f -name "*.h")
+HEADERS_ASM := $(shell find $(SRC_DIR) -type f -name "*.inc")
 
-# Исходники
-ASM_SRC = $(SRC_DIR)/kernel.asm
-C_SRC = $(SRC_DIR)/kernel.c $(SRC_DIR)/commands.c $(SRC_DIR)/calc.c
+# Object files
+OBJECTS_C := $(patsubst $(SRC_DIR)/%.c, $(BUILD_C)/%.o, $(SOURCES_C))
+OBJECTS_ASM := $(patsubst $(SRC_DIR)/%.asm, $(BUILD_ASM)/%.o, $(SOURCES_ASM))
 
-# Объекты
-ASM_OBJ = $(BIN_DIR)/boot.o
-C_OBJ = $(BIN_DIR)/kmain.o $(BIN_DIR)/commands.o $(BIN_DIR)/calc.o
+# Final targets
+ISO_IMAGE := loxsete-os.iso
+KERNEL_ELF := $(BUILD_DIR)/kernel.bin
 
-# Основная цель
-all: $(ISO)
+.PHONY: all clean run always
 
-# Создание директории bin
-$(BIN_DIR):
-	mkdir -p $(BIN_DIR)
+all: $(ISO_IMAGE)
 
-# Компиляция ASM
-$(ASM_OBJ): $(ASM_SRC) | $(BIN_DIR)
-	$(NASM) $(NASMFLAGS) $< -o $@
+$(ISO_IMAGE): $(KERNEL_ELF) grub.cfg
+	@echo "Creating ISO..."
+	@mkdir -p $(ISO_DIR)/boot/grub
+	@cp $< $(ISO_DIR)/boot/kernel.bin
+	@cp grub.cfg $(ISO_DIR)/boot/grub/grub.cfg
+	@grub-mkrescue $(ISO_DIR) -o $@
+	@echo "Build done!"
 
-# Компиляция C
-$(BIN_DIR)/kmain.o: $(SRC_DIR)/kernel.c | $(BIN_DIR)
-	$(GCC) $(CFLAGS) $< -o $@
+$(KERNEL_ELF): $(OBJECTS_ASM) $(OBJECTS_C)
+	@echo "Linking $@"
+	@$(TARGET_LD) $(TARGET_LINKFLAGS) -Wl,-Map=$(BUILD_DIR)/image.map -o $@ $^ $(TARGET_LIBS)
 
-$(BIN_DIR)/commands.o: $(SRC_DIR)/commands.c | $(BIN_DIR)
-	$(GCC) $(CFLAGS) $< -o $@
+# C compilation
+$(BUILD_C)/%.o: $(SRC_DIR)/%.c $(HEADERS_C)
+	@echo "Compiling $<"
+	@mkdir -p $(@D)
+	@$(TARGET_CC) $(TARGET_CFLAGS) -c -o $@ $<
 
-$(BIN_DIR)/calc.o: $(SRC_DIR)/calc.c | $(BIN_DIR)
-	$(GCC) $(CFLAGS) $< -o $@
+# ASM compilation
+$(BUILD_ASM)/%.o: $(SRC_DIR)/%.asm $(HEADERS_ASM)
+	@echo "Assembling $<"
+	@mkdir -p $(@D)
+	@$(TARGET_ASM) $(TARGET_ASMFLAGS) -o $@ $<
 
-# Линковка ядра
-$(KERNEL): $(ASM_OBJ) $(C_OBJ)
-	$(LD) $(LDFLAGS) -o $@ $^
-
-# Создание ISO
-$(ISO): $(KERNEL) grub.cfg
-	mkdir -p iso/boot/grub
-	cp $(KERNEL) iso/boot/
-	cp grub.cfg $(GRUB_CFG_PATH)
-	$(GRUBMKRESCUE) -o $(ISO) iso
-
-# Запуск
 run: all
-	$(QEMU) -cdrom $(ISO)
+	@qemu-system-i386 -cdrom $(ISO_IMAGE) -m 4M --enable-kvm
 
-# Очистка
 clean:
-	rm -rf $(BIN_DIR) *.o $(ISO) iso
-
-# Создание grub.cfg
-grub.cfg:
-	echo 'menuentry "Loxsete-OS" {' > grub.cfg
-	echo '    multiboot /boot/kernel.bin' >> grub.cfg
-	echo '    boot' >> grub.cfg
-	echo '}' >> grub.cfg
-
-.PHONY: all run clean
+	@rm -rf $(BUILD_DIR) $(ISO_IMAGE) $(ISO_DIR) bin
