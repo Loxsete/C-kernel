@@ -14,7 +14,7 @@ void kmain(uint32_t mbinfo_ptr) {
     }
     
     fb_init(&fb);
-
+	clear_screen();
     Color white = 0xFFFFFFFF;
     Color pink = 0xFF00FFFF;
 

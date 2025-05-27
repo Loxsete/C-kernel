@@ -18,3 +18,13 @@ void pixel(int x, int y, uint32_t color)
     if (x > width || y > height) return;
     framebuffer[y * pitch + x] = color;
 }
+
+void clear_screen(void)
+{
+	uint32_t dark_blue = 0x008080;
+	for (uint16_t y = 0; y < height; y++) {
+		for (uint16_t x = 0; x < width; x++) {
+			framebuffer[y * pitch + x] = dark_blue;
+		}
+	}
+}

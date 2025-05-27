@@ -1,0 +1,219 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+                              build/c/info.o (__udivdi3)
+
+There are no discarded input sections
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+*default*        0x00000000         0xffffffff
+
+Linker script and memory map
+
+LOAD build/asm/kernel.o
+LOAD build/c/kernel.o
+LOAD build/c/graphics.o
+LOAD build/c/info.o
+LOAD build/c/utils.o
+LOAD build/c/drivers/multiboot.o
+LOAD build/c/font.o
+LOAD /usr/lib/gcc/i686-elf/11.2.0/libgcc.a
+                0x00100000                        . = 0x100000
+
+.text           0x00100000      0xd9a
+ *(.text)
+ .text          0x00100000        0xf build/asm/kernel.o
+ *fill*         0x0010000f        0x1 
+ .text          0x00100010       0x71 build/c/kernel.o
+                0x00100010                kmain
+ *fill*         0x00100081        0xf 
+ .text          0x00100090       0xd7 build/c/graphics.o
+                0x00100090                fb_init
+                0x001000c0                pixel
+                0x00100100                clear_screen
+ *fill*         0x00100167        0x9 
+ .text          0x00100170      0x69a build/c/info.o
+                0x001001f0                delay_ms
+                0x00100260                get_cpu_info
+                0x00100300                estimate_cpu_frequency
+                0x00100390                get_system_info
+                0x00100440                display_system_info
+ *fill*         0x0010080a        0x6 
+ .text          0x00100810      0x287 build/c/utils.o
+                0x00100810                my_strlen
+                0x00100830                uint_to_str
+                0x001008d0                uint64_to_str
+                0x001009e0                trim_string
+ *fill*         0x00100a97        0x9 
+ .text          0x00100aa0       0x69 build/c/drivers/multiboot.o
+                0x00100aa0                multiboot_parse
+ *fill*         0x00100b09        0x7 
+ .text          0x00100b10      0x15a build/c/font.o
+                0x00100b10                character
+                0x00100bb0                print_string
+ *fill*         0x00100c6a        0x6 
+ .text          0x00100c70      0x12a /usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+                0x00100c70                __udivdi3
+
+.iplt           0x00100d9a        0x0
+ .iplt          0x00100d9a        0x0 build/asm/kernel.o
+
+.multiboot      0x00100da0       0x30
+ .multiboot     0x00100da0       0x30 build/asm/kernel.o
+
+.rodata.str1.1  0x00100dd0       0x66
+ .rodata.str1.1
+                0x00100dd0       0x66 build/c/kernel.o
+                                 0x14 (size before relaxing)
+ .rodata.str1.1
+                0x00100e36       0x52 build/c/info.o
+
+.eh_frame       0x00100e38       0x64
+ .eh_frame      0x00100e38       0x64 /usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+
+.rel.dyn        0x00100e9c        0x0
+ .rel.got       0x00100e9c        0x0 build/asm/kernel.o
+ .rel.iplt      0x00100e9c        0x0 build/asm/kernel.o
+
+.data           0x00100ea0      0xd00
+ *(.data)
+ .data          0x00100ea0        0x0 build/c/kernel.o
+ .data          0x00100ea0        0x0 build/c/graphics.o
+ .data          0x00100ea0        0x0 build/c/info.o
+ .data          0x00100ea0        0x0 build/c/utils.o
+ .data          0x00100ea0        0x0 build/c/drivers/multiboot.o
+ .data          0x00100ea0      0xd00 build/c/font.o
+                0x00100ea0                font8x8_basic
+ .data          0x00101ba0        0x0 /usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+
+.got            0x00101ba0        0x0
+ .got           0x00101ba0        0x0 build/asm/kernel.o
+
+.got.plt        0x00101ba0        0x0
+ .got.plt       0x00101ba0        0x0 build/asm/kernel.o
+
+.igot.plt       0x00101ba0        0x0
+ .igot.plt      0x00101ba0        0x0 build/asm/kernel.o
+
+.bss            0x00101ba0     0x200c
+ *(.bss)
+ .bss           0x00101ba0     0x2000 build/asm/kernel.o
+ .bss           0x00103ba0        0x0 build/c/kernel.o
+ .bss           0x00103ba0        0xc build/c/graphics.o
+                0x00103ba0                height
+                0x00103ba2                width
+                0x00103ba4                pitch
+                0x00103ba8                framebuffer
+ .bss           0x00103bac        0x0 build/c/info.o
+ .bss           0x00103bac        0x0 build/c/utils.o
+ .bss           0x00103bac        0x0 build/c/drivers/multiboot.o
+ .bss           0x00103bac        0x0 build/c/font.o
+ .bss           0x00103bac        0x0 /usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+OUTPUT(build/kernel.bin elf32-i386)
+
+.debug_info     0x00000000     0x19ca
+ .debug_info    0x00000000      0x30a build/c/kernel.o
+ .debug_info    0x0000030a      0x23c build/c/graphics.o
+ .debug_info    0x00000546      0xc50 build/c/info.o
+ .debug_info    0x00001196      0x26f build/c/utils.o
+ .debug_info    0x00001405      0x1dd build/c/drivers/multiboot.o
+ .debug_info    0x000015e2      0x3e8 build/c/font.o
+
+.debug_abbrev   0x00000000      0x8c9
+ .debug_abbrev  0x00000000      0x115 build/c/kernel.o
+ .debug_abbrev  0x00000115       0xfe build/c/graphics.o
+ .debug_abbrev  0x00000213      0x2a4 build/c/info.o
+ .debug_abbrev  0x000004b7      0x173 build/c/utils.o
+ .debug_abbrev  0x0000062a       0xde build/c/drivers/multiboot.o
+ .debug_abbrev  0x00000708      0x1c1 build/c/font.o
+
+.debug_aranges  0x00000000       0xc0
+ .debug_aranges
+                0x00000000       0x20 build/c/kernel.o
+ .debug_aranges
+                0x00000020       0x20 build/c/graphics.o
+ .debug_aranges
+                0x00000040       0x20 build/c/info.o
+ .debug_aranges
+                0x00000060       0x20 build/c/utils.o
+ .debug_aranges
+                0x00000080       0x20 build/c/drivers/multiboot.o
+ .debug_aranges
+                0x000000a0       0x20 build/c/font.o
+
+.debug_line     0x00000000      0xcd9
+ .debug_line    0x00000000       0xce build/c/kernel.o
+ .debug_line    0x000000ce      0x127 build/c/graphics.o
+ .debug_line    0x000001f5      0x64b build/c/info.o
+ .debug_line    0x00000840      0x258 build/c/utils.o
+ .debug_line    0x00000a98       0xbf build/c/drivers/multiboot.o
+ .debug_line    0x00000b57      0x182 build/c/font.o
+
+.debug_str      0x00000000      0x391
+ .debug_str     0x00000000      0x391 build/c/kernel.o
+                                0x28d (size before relaxing)
+ .debug_str     0x00000391      0x1dd build/c/graphics.o
+ .debug_str     0x00000391      0x313 build/c/info.o
+ .debug_str     0x00000391      0x137 build/c/utils.o
+ .debug_str     0x00000391      0x1c7 build/c/drivers/multiboot.o
+ .debug_str     0x00000391      0x15a build/c/font.o
+
+.debug_line_str
+                0x00000000       0xe4
+ .debug_line_str
+                0x00000000       0xe4 build/c/kernel.o
+                                 0xd0 (size before relaxing)
+ .debug_line_str
+                0x000000e4       0xc8 build/c/graphics.o
+ .debug_line_str
+                0x000000e4       0xbf build/c/info.o
+ .debug_line_str
+                0x000000e4       0xa0 build/c/utils.o
+ .debug_line_str
+                0x000000e4       0xd0 build/c/drivers/multiboot.o
+ .debug_line_str
+                0x000000e4       0xac build/c/font.o
+
+.comment        0x00000000       0x12
+ .comment       0x00000000       0x12 build/c/kernel.o
+                                 0x13 (size before relaxing)
+ .comment       0x00000012       0x13 build/c/graphics.o
+ .comment       0x00000012       0x13 build/c/info.o
+ .comment       0x00000012       0x13 build/c/utils.o
+ .comment       0x00000012       0x13 build/c/drivers/multiboot.o
+ .comment       0x00000012       0x13 build/c/font.o
+ .comment       0x00000012       0x13 /usr/lib/gcc/i686-elf/11.2.0/libgcc.a(_udivdi3.o)
+
+.debug_frame    0x00000000      0x360
+ .debug_frame   0x00000000       0x30 build/c/kernel.o
+ .debug_frame   0x00000030       0x80 build/c/graphics.o
+ .debug_frame   0x000000b0      0x128 build/c/info.o
+ .debug_frame   0x000001d8       0xe4 build/c/utils.o
+ .debug_frame   0x000002bc       0x38 build/c/drivers/multiboot.o
+ .debug_frame   0x000002f4       0x6c build/c/font.o
+
+.debug_loclists
+                0x00000000      0xdc2
+ .debug_loclists
+                0x00000000       0x3e build/c/graphics.o
+ .debug_loclists
+                0x0000003e      0x734 build/c/info.o
+ .debug_loclists
+                0x00000772      0x28f build/c/utils.o
+ .debug_loclists
+                0x00000a01       0x6e build/c/drivers/multiboot.o
+ .debug_loclists
+                0x00000a6f      0x353 build/c/font.o
+
+.debug_rnglists
+                0x00000000      0x153
+ .debug_rnglists
+                0x00000000       0x17 build/c/graphics.o
+ .debug_rnglists
+                0x00000017       0xed build/c/info.o
+ .debug_rnglists
+                0x00000104       0x13 build/c/drivers/multiboot.o
+ .debug_rnglists
+                0x00000117       0x3c build/c/font.o
