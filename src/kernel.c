@@ -17,9 +17,11 @@ void kmain(uint32_t mbinfo_ptr) {
 	clear_screen();
     Color white = 0xFFFFFFFF;
     Color pink = 0xFF00FFFF;
-
+	
     print_string(10, 20, "Hello, from kernel!", pink, 1);
-
+	// For exemple draw cirle
+    draw_circle(100, 300, 50, 0xFF0000FF);
+    draw_rectangle(100, 100, 100, 100, 0xFF0000FF);
     system_info_t sys_info;
     get_system_info(&sys_info, &fb);
     display_system_info(&sys_info, 10, 60, white, 1);

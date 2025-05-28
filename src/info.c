@@ -1,4 +1,3 @@
-
 #include "info.h"
 #include <font.h>
 #include <graphics.h>
