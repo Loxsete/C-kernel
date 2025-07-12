@@ -4,6 +4,7 @@
 #include "font.h"
 #include "utils.h"
 #include "memory_viewer.h"
+#include "fat32.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -176,15 +177,21 @@ void process_command(char *cmd) {
         y_pos += 20;
         print_string(10, y_pos, "5. comcrush - COM crusher", white, 1);
         y_pos += 20;
-        print_string(10, y_pos, "6. mem - memory viewer", white, 1);  
+        print_string(10, y_pos, "6. mem - memory viewer", white, 1);
         y_pos += 20;
-        print_string(10, y_pos, "7. mem <addr> - view at address", white, 1);  
+        print_string(10, y_pos, "7. mem <addr> - view at address", white, 1);
         y_pos += 20;
-        print_string(10, y_pos, "8. vidcrush - video memory crush", white, 1);  
+        print_string(10, y_pos, "8. vidcrush - video memory crush", white, 1);
         y_pos += 20;
-        print_string(10, y_pos, "9. reboot - reboot system", white, 1);  
+        print_string(10, y_pos, "9. reboot - reboot system", white, 1);
         y_pos += 20;
-        print_string(10, y_pos, "10. beep - play beep sound", white, 1);  
+        print_string(10, y_pos, "10. beep - play beep sound", white, 1);
+        y_pos += 20;
+        print_string(10, y_pos, "11. ls - list directory contents", white, 1);
+        y_pos += 20;
+        print_string(10, y_pos, "12. cat <filename> - display file contents", white, 1);
+        y_pos += 20;
+        print_string(10, y_pos, "13. cd <dirname> - change directory", white, 1);
         y_pos += 20;
     } else if (str_cmp(cmd, "info") == 0) {
         print_string(10, y_pos, "Hello, World!", white, 1);
@@ -202,16 +209,16 @@ void process_command(char *cmd) {
     } else if (str_cmp(cmd, "comcrush") == 0) {
         debug_print("Sending garbage...", red);
         for (int i = 0; i < 4048; i++) {
-            com_send_char(0xFF);  
+            com_send_char(0xFF);
         }
         debug_print("Garbage sent.", red);
         print_string(10, y_pos, "Sent garbage to COM", white, 1);
         y_pos += 20;
-    } else if (str_cmp(cmd, "mem") == 0) {  
+    } else if (str_cmp(cmd, "mem") == 0) {
         print_string(10, y_pos, "Memory viewer started", white, 1);
         y_pos += 20;
         memory_viewer_start();
-    } else if (strncmp(cmd, "mem ", 4) == 0 && cmd[4] != '\0') {  
+    } else if (strncmp(cmd, "mem ", 4) == 0 && cmd[4] != '\0') {
         uint32_t addr = parse_hex_address(cmd + 4);
         memory_viewer_set_address(addr);
         print_string(10, y_pos, "Memory viewer at address", white, 1);
@@ -227,13 +234,11 @@ void process_command(char *cmd) {
         debug_print("Video crusher!", red);
         print_string(10, y_pos, "Crushing video memory...", red, 1);
         y_pos += 20;
-    
         volatile char *video_mem = (char*)0xA0000;
         for (int i = 0; i < 0x20000; i++) {
             video_mem[i] = (i % 256);
         }
         debug_print("Video memory crushed!", red);
-    
         for (int i = 0; i < 10000; i++) {
             volatile uint32_t *ptr = (uint32_t*)(0x100000 + (i * 4096));
             *ptr = 0xDEADBEEF;
@@ -241,34 +246,32 @@ void process_command(char *cmd) {
         debug_print("Memory crushed!", red);
     } else if (str_cmp(cmd, "reboot") == 0) {
         debug_print("Rebooting...", yellow);
-        write_port(0x64, 0xFE); 
+        write_port(0x64, 0xFE);
         print_string(10, y_pos, "System reboot triggered", white, 1);
         y_pos += 20;
-
-	} else if (str_cmp(cmd, "time") == 0) {
-	    debug_print("Reading CMOS RTC...", green);
-	    write_port(0x70, 0x04);
-	    unsigned char hours = read_port(0x71);
-	    write_port(0x70, 0x02); 
-	    unsigned char minutes = read_port(0x71);
-	    write_port(0x70, 0x00); 
-	    unsigned char seconds = read_port(0x71);
-	    char time_str[16];
-	    time_str[0] = '0' + (hours >> 4);
-	    time_str[1] = '0' + (hours & 0xF);
-	    time_str[2] = ':';
-	    time_str[3] = '0' + (minutes >> 4);
-	    time_str[4] = '0' + (minutes & 0xF);
-	    time_str[5] = ':';
-	    time_str[6] = '0' + (seconds >> 4);
-	    time_str[7] = '0' + (seconds & 0xF);
-	    time_str[8] = '\0';
-	    print_string(10, y_pos, time_str, white, 1);
-	    y_pos += 20;
-        
+    } else if (str_cmp(cmd, "time") == 0) {
+        debug_print("Reading CMOS RTC...", green);
+        write_port(0x70, 0x04);
+        unsigned char hours = read_port(0x71);
+        write_port(0x70, 0x02);
+        unsigned char minutes = read_port(0x71);
+        write_port(0x70, 0x00);
+        unsigned char seconds = read_port(0x71);
+        char time_str[16];
+        time_str[0] = '0' + (hours >> 4);
+        time_str[1] = '0' + (hours & 0xF);
+        time_str[2] = ':';
+        time_str[3] = '0' + (minutes >> 4);
+        time_str[4] = '0' + (minutes & 0xF);
+        time_str[5] = ':';
+        time_str[6] = '0' + (seconds >> 4);
+        time_str[7] = '0' + (seconds & 0xF);
+        time_str[8] = '\0';
+        print_string(10, y_pos, time_str, white, 1);
+        y_pos += 20;
     } else if (str_cmp(cmd, "beep") == 0) {
         debug_print("Beeping...", green);
-        write_port(0x43, 0xB6); 
+        write_port(0x43, 0xB6);
         write_port(0x42, 1193180 / 1000 & 0xFF);
         write_port(0x42, 1193180 / 1000 >> 8);
         write_port(0x61, read_port(0x61) | 0x03);
@@ -276,7 +279,55 @@ void process_command(char *cmd) {
         write_port(0x61, read_port(0x61) & 0xFC);
         print_string(10, y_pos, "Beep!", white, 1);
         y_pos += 20;
-
+    } else if (str_cmp(cmd, "ls") == 0) {
+        debug_print("Attempting to list directory", green);
+        fat32_dir_entry_t entries[MAX_FILES];
+        uint32_t count;
+        fat32_list_dir(fat32_get_current_path(), entries, &count);
+        debug_print_hex("Directory entries found: 0x", (uint8_t)count);
+        if (count == 0) {
+            print_string(10, y_pos, "Directory is empty", white, 1);
+            y_pos += 20;
+        } else {
+            for (uint32_t i = 0; i < count; i++) {
+                char entry_info[64];
+                str_copy(entry_info, entries[i].name, sizeof(entry_info));
+                if (entries[i].attributes & 0x10) {
+                    str_copy(entry_info + str_len(entry_info), " <DIR>", sizeof(entry_info) - str_len(entry_info));
+                } else {
+                    char size_str[16];
+                    uint32_to_str(entries[i].size, size_str, sizeof(size_str));
+                    str_copy(entry_info + str_len(entry_info), " ", sizeof(entry_info) - str_len(entry_info));
+                    str_copy(entry_info + str_len(entry_info), size_str, sizeof(entry_info) - str_len(entry_info));
+                    str_copy(entry_info + str_len(entry_info), " bytes", sizeof(entry_info) - str_len(entry_info));
+                }
+                print_string(10, y_pos, entry_info, white, 1);
+                y_pos += 20;
+            }
+        }
+        debug_print("Directory listed", green);
+    } else if (strncmp(cmd, "cat ", 4) == 0 && cmd[4] != '\0') {
+        debug_print("Attempting to read file", green);
+        char file_buffer[1024];
+        fat32_read_file(cmd + 4, file_buffer, sizeof(file_buffer) - 1);
+        if (file_buffer[0] == '\0') {
+            char error_msg[256] = "Cannot read file: ";
+            str_copy(error_msg + str_len(error_msg), cmd + 4, sizeof(error_msg) - str_len(error_msg));
+            print_string(10, y_pos, error_msg, red, 1);
+            y_pos += 20;
+        } else {
+            print_string(10, y_pos, file_buffer, white, 1);
+            y_pos += 20;
+            debug_print("File contents displayed", green);
+        }
+    } else if (strncmp(cmd, "cd ", 3) == 0 && cmd[3] != '\0') {
+        debug_print("Attempting to change directory", green);
+        fat32_change_dir(cmd + 3);
+        char path_msg[256] = "Changed directory to: ";
+        str_copy(path_msg + str_len(path_msg), fat32_get_current_path(), sizeof(path_msg) - str_len(path_msg));
+        print_string(10, y_pos, path_msg, white, 1);
+        y_pos += 20;
+        debug_print("Directory changed", green);
     } else if (cmd[0] != '\0') {
         char msg[256] = "Unknown command: ";
         unsigned int msg_len = str_len(msg);
@@ -285,7 +336,6 @@ void process_command(char *cmd) {
         y_pos += 20;
     }
 }
-
 
 void idt_init(void) {
     unsigned long keyboard_address;
