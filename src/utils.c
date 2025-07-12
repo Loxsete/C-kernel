@@ -131,3 +131,20 @@ int strncmp(const char *s1, const char *s2, unsigned int n) {
     if (n == 0) return 0;
     return *s1 - *s2;
 }
+
+void format_filename_display(const char* fat_name, char* output) {
+    int i, j = 0;
+
+    for (i = 0; i < 8 && fat_name[i] != ' '; i++) {
+        output[j++] = fat_name[i];
+    }
+
+    if (fat_name[8] != ' ') {
+        output[j++] = '.';
+        for (i = 8; i < 11 && fat_name[i] != ' '; i++) {
+            output[j++] = fat_name[i];
+        }
+    }
+
+    output[j] = '\0';
+}
