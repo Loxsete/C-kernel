@@ -166,6 +166,18 @@ void process_command(char *cmd) {
         debug_print_hex("Current COM1 status: 0x", status);
         print_string(10, y_pos, "Status output to debug", white, 1);
         y_pos += 20;
+
+    } else if (str_cmp(cmd, "comcrush") == 0) {
+        debug_print("Sending garbage...", red);
+        for (int i = 0; i < 512; i++) {
+            com_send_char(0xFF);  
+        }
+        debug_print("Garbage sent.", red);
+        print_string(10, y_pos, "Sent garbage to COM", white, 1);
+        y_pos += 20;
+    	debug_print("Garbage sent.", red);
+    	print_string(10, y_pos, "Sent garbage to COM", white, 1);
+    	y_pos += 20;
     } else if (strncmp(cmd, "com ", 4) == 0 && cmd[4] != '\0') {
         debug_print("COM command received", green);
         com_send_string(cmd + 4);
