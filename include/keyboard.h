@@ -16,5 +16,6 @@ struct IDT_entry {
 void idt_init(void);
 void kb_init(void);
 void keyboard_handler_main(void);
+void com_init(void);
 
 #endif

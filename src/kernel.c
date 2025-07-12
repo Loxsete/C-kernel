@@ -18,15 +18,14 @@ void kmain(uint32_t mbinfo_ptr) {
     Color white = 0xFFFFFFFF;
     Color pink = 0xFF00FFFF;
 
-	
-	system_info_t sys_info;
-	get_system_info(&sys_info, &fb);
-	
+    system_info_t sys_info;
+    get_system_info(&sys_info, &fb);
+    
     print_string(10, 20, "Hello, from kernel!", pink, 1);
-	
-    // Initialize keyboard
+    
     idt_init();
     kb_init();
+    com_init();
     print_string(10, 80, "user:", white, 1);
 
     for (;;) {}

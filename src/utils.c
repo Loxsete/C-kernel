@@ -105,3 +105,12 @@ void str_copy(char *dest, const char *src, unsigned int max_len) {
     }
     dest[i] = '\0';
 }
+int strncmp(const char *s1, const char *s2, unsigned int n) {
+    while (n > 0 && *s1 && *s2 && *s1 == *s2) {
+        s1++;
+        s2++;
+        n--;
+    }
+    if (n == 0) return 0;
+    return *s1 - *s2;
+}

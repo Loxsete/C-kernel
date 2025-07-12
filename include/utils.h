@@ -10,5 +10,6 @@ void trim_string(char* str);
 unsigned int str_len(const char *str);
 int str_cmp(const char *s1, const char *s2);
 void str_copy(char *dest, const char *src, unsigned int max_len);
+int strncmp(const char *s1, const char *s2, unsigned int n);
 
 #endif // UTILS_H
