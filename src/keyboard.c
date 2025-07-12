@@ -3,6 +3,7 @@
 #include "graphics.h"
 #include "font.h"
 #include "utils.h"
+#include "memory_viewer.h"
 
 #define KEYBOARD_DATA_PORT 0x60
 #define KEYBOARD_STATUS_PORT 0x64
@@ -173,6 +174,15 @@ void process_command(char *cmd) {
         y_pos += 20;
         print_string(10, y_pos, "4. comstatus - COM status", white, 1);
         y_pos += 20;
+        print_string(10, y_pos, "5. comcrush - COM crusher", white, 1);
+        y_pos += 20;
+        print_string(10, y_pos, "6. mem - memory viewer", white, 1);  
+        y_pos += 20;
+        print_string(10, y_pos, "7. mem <addr> - view at address", white, 1);  
+        y_pos += 20;
+        print_string(10, y_pos, "8. vidcrush - video memory crush", white, 1);  
+        y_pos += 20;
+        
     } else if (str_cmp(cmd, "info") == 0) {
         print_string(10, y_pos, "Hello, World!", white, 1);
         y_pos += 20;
@@ -186,24 +196,53 @@ void process_command(char *cmd) {
         debug_print_hex("Current COM1 status: 0x", status);
         print_string(10, y_pos, "Status output to debug", white, 1);
         y_pos += 20;
-
     } else if (str_cmp(cmd, "comcrush") == 0) {
         debug_print("Sending garbage...", red);
-        for (int i = 0; i < 512; i++) {
+        for (int i = 0; i < 4048; i++) {
             com_send_char(0xFF);  
         }
         debug_print("Garbage sent.", red);
         print_string(10, y_pos, "Sent garbage to COM", white, 1);
         y_pos += 20;
-    	debug_print("Garbage sent.", red);
-    	print_string(10, y_pos, "Sent garbage to COM", white, 1);
-    	y_pos += 20;
+        debug_print("Garbage sent.", red);
+        print_string(10, y_pos, "Sent garbage to COM", white, 1);
+        y_pos += 20;
+    } else if (str_cmp(cmd, "mem") == 0) {  
+        print_string(10, y_pos, "Memory viewer started", white, 1);
+        y_pos += 20;
+        memory_viewer_start();
+    } else if (strncmp(cmd, "mem ", 4) == 0 && cmd[4] != '\0') {  
+        uint32_t addr = parse_hex_address(cmd + 4);
+        memory_viewer_set_address(addr);
+        print_string(10, y_pos, "Memory viewer at address", white, 1);
+        y_pos += 20;
+        memory_viewer_start();
     } else if (strncmp(cmd, "com ", 4) == 0 && cmd[4] != '\0') {
         debug_print("COM command received", green);
         com_send_string(cmd + 4);
         print_string(10, y_pos, "Sent: ", white, 1);
         print_string(110, y_pos, cmd + 4, white, 1);
         y_pos += 20;
+    } else if (str_cmp(cmd, "vidcrush") == 0) {
+        debug_print("Video crusher!", red);
+        print_string(10, y_pos, "Crushing video memory...", red, 1);
+        y_pos += 20;
+        
+        
+        volatile char *video_mem = (char*)0xA0000; 
+        for (int i = 0; i < 0x20000; i++) {
+            video_mem[i] = (i % 256);
+        }
+        
+        debug_print("Video memory crushed!", red);
+        
+        
+        for (int i = 0; i < 10000; i++) {
+            volatile char *ptr = (char*)(0x100000 + (i * 4096)); 
+            *ptr = 0xDEADBEEF;
+        }
+        debug_print("Memory crushed!", red);
+        
     } else if (cmd[0] != '\0') {
         char msg[256] = "Unknown command: ";
         unsigned int msg_len = str_len(msg);
@@ -212,6 +251,7 @@ void process_command(char *cmd) {
         y_pos += 20;
     }
 }
+
 
 void idt_init(void) {
     unsigned long keyboard_address;
@@ -257,6 +297,7 @@ void idt_init(void) {
 void kb_init(void) {
     write_port(0x21, 0xFD);
     com_init();
+    memory_viewer_init();
 }
 
 void keyboard_handler_main(void) {
@@ -268,6 +309,12 @@ void keyboard_handler_main(void) {
     status = read_port(KEYBOARD_STATUS_PORT);
     if (status & 0x01) {
         keycode = read_port(KEYBOARD_DATA_PORT);
+
+        // Если memory viewer активен, передать управление ему
+        if (memory_viewer_is_active()) {
+            memory_viewer_handle_key(keycode);
+            return;
+        }
 
         if (keycode == 0x2A || keycode == 0x36) {
             shift_pressed = 1;

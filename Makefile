@@ -56,6 +56,6 @@ $(BUILD_ASM)/%.o: $(SRC_DIR)/%.asm $(HEADERS_ASM)
 	@$(TARGET_ASM) $(TARGET_ASMFLAGS) -o $@ $<
 
 run: all
-	@qemu-system-i386 -cdrom $(ISO_IMAGE) -m 1024M --enable-kvm -serial stdio
+	@qemu-system-i386 -cdrom $(ISO_IMAGE) -m 48M --enable-kvm -serial stdio
 clean:
 	@rm -rf $(BUILD_DIR) $(ISO_IMAGE) $(ISO_DIR) bin
