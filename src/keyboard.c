@@ -10,6 +10,10 @@
 #define BACKSPACE_KEY_CODE 0x0E
 #define COM1_PORT 0x3F8
 
+#define DEBUG_LINES 16
+#define DEBUG_LINE_LENGTH 128
+#define DEBUG_X_RIGHT 800 
+
 extern char read_port(unsigned short port);
 extern void write_port(unsigned short port, unsigned char data);
 extern void load_idt(unsigned long *idt_ptr);
@@ -29,14 +33,30 @@ static int debug_y = 600;
 
 static struct IDT_entry IDT[IDT_SIZE];
 
+static char debug_lines[DEBUG_LINES][DEBUG_LINE_LENGTH];
+static Color debug_colors[DEBUG_LINES];
+static int debug_line_count = 0;
+
+
 void debug_print(const char *msg, Color color) {
-    if (debug_y >= 760) {
-        draw_rectangle(0, 600, 1024, 168, 0x00000000);
-        debug_y = 600;
+    if (debug_line_count < DEBUG_LINES) {
+        debug_line_count++;
     }
-    print_string(10, debug_y, msg, color, 1);
-    debug_y += 15;
+    for (int i = DEBUG_LINES - 1; i > 0; i--) {
+        str_copy(debug_lines[i], debug_lines[i - 1], DEBUG_LINE_LENGTH);
+        debug_colors[i] = debug_colors[i - 1];
+    }
+
+    str_copy(debug_lines[0], msg, DEBUG_LINE_LENGTH);
+    debug_colors[0] = color;
+
+    draw_rectangle(DEBUG_X_RIGHT, 0, 1024 - DEBUG_X_RIGHT, DEBUG_LINES * 15, 0x00000000);
+
+    for (int i = 0; i < debug_line_count; i++) {
+        print_string(DEBUG_X_RIGHT, i * 15, debug_lines[i], debug_colors[i], 1);
+    }
 }
+
 
 void debug_print_hex(const char *prefix, unsigned char value) {
     char hex_str[32];
@@ -204,6 +224,17 @@ void idt_init(void) {
     IDT[0x21].type_attr = 0x8e;
     IDT[0x21].offset_higherbits = (keyboard_address & 0xffff0000) >> 16;
 
+    debug_print("IDT[0x21] setup:", green);
+    char msg[64];
+    debug_print_hex("offset_low: 0x", IDT[0x21].offset_lowerbits & 0xFF);
+    debug_print_hex("offset_low_hi: 0x", (IDT[0x21].offset_lowerbits >> 8) & 0xFF);
+
+    debug_print_hex("offset_high: 0x", IDT[0x21].offset_higherbits & 0xFF);
+    debug_print_hex("offset_high_hi: 0x", (IDT[0x21].offset_higherbits >> 8) & 0xFF);
+
+    debug_print_hex("selector: 0x", IDT[0x21].selector);
+    debug_print_hex("type_attr: 0x", IDT[0x21].type_attr);
+
     write_port(0x20, 0x11);
     write_port(0xA0, 0x11);
     write_port(0x21, 0x20);
@@ -220,6 +251,7 @@ void idt_init(void) {
     idt_ptr[1] = idt_address >> 16;
 
     load_idt(idt_ptr);
+    debug_print("IDT loaded.", green);
 }
 
 void kb_init(void) {

@@ -25,7 +25,6 @@ void kmain(uint32_t mbinfo_ptr) {
     
     idt_init();
     kb_init();
-    com_init();
     print_string(10, 80, "user:", white, 1);
 
     for (;;) {}
